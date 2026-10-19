@@ -13,3 +13,4 @@ public class AuditAwareImpl implements AuditorAware<String> {
         return Optional.of("system"); // Replace with actual logic to retrieve the current user
     }
 }
+// this class implements the AuditorAware interface from Spring Data JPA, which is used for auditing purposes. The getCurrentAuditor() method returns the current auditor, which in this case is hardcoded to "system". In a real application, you would replace this with logic to retrieve the actual username of the logged-in user.
