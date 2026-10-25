@@ -25,6 +25,7 @@ public class AccountsServiceImpl implements IAccountsService {
 
     private final AccountRepository accountRepository;
     private final CustomerRepository customerRepository;
+
     @Override
     public void createAccount(CustomerDto customerDto) {
         Customer customer =CustomerMapper.mapToCustomer(customerDto, new Customer());
@@ -54,6 +55,7 @@ public class AccountsServiceImpl implements IAccountsService {
      * @param mobileNumber - Input Mobile Number
      * @return Accounts Details based on a given mobileNumber
      */
+
     @Override
     public CustomerDto fetchAccount(String mobileNumber) {
         Customer customer = customerRepository.findByMobileNumber(mobileNumber).orElseThrow(

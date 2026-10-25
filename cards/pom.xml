@@ -28,7 +28,7 @@
         <url/>
     </scm>
     <properties>
-        <java.version>25</java.version>
+        <java.version>17</java.version>
     </properties>
 	<dependencies>
 		<dependency>
@@ -98,9 +98,22 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>com.google.cloud.tools</groupId>
+                <artifactId>jib-maven-plugin</artifactId>
+                <version>3.4.5</version>
+                <configuration>
+                    <to>
+                        <image>eazybytes/${project.artifactId}:s6</image>
+                    </to>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
+                    <image>
+                        <name>eazybytes/${project.artifactId}:s4</name>
+                    </image>
                     <excludes>
                         <exclude>
                             <groupId>org.projectlombok</groupId>

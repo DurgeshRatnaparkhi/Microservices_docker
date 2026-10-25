@@ -9,6 +9,7 @@ import lombok.*;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
+@Data
 public class Cards extends BaseEntity {
 
 	@Id

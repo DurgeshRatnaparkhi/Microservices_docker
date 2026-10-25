@@ -9,6 +9,7 @@ import com.eazybytes.loans.mapper.LoansMapper;
 import com.eazybytes.loans.repository.LoansRepository;
 import com.eazybytes.loans.service.ILoansService;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -16,6 +17,7 @@ import java.util.Random;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class LoansServiceImpl implements ILoansService {
 
     private LoansRepository loansRepository;
@@ -25,11 +27,26 @@ public class LoansServiceImpl implements ILoansService {
      */
     @Override
     public void createLoan(String mobileNumber) {
-        Optional<Loans> optionalLoans= loansRepository.findByMobileNumber(mobileNumber);
-        if(optionalLoans.isPresent()){
-            throw new LoanAlreadyExistsException("Loan already registered with given mobileNumber "+mobileNumber);
+
+        log.info("Starting createLoan for mobile number: {}", mobileNumber);
+
+        Optional<Loans> optionalLoans =
+                loansRepository.findByMobileNumber(mobileNumber);
+
+        if (optionalLoans.isPresent()) {
+            log.warn("Loan already exists for mobile number: {}", mobileNumber);
+
+            throw new LoanAlreadyExistsException(
+                    "Loan already registered with given mobileNumber "
+                            + mobileNumber
+            );
         }
-        loansRepository.save(createNewLoan(mobileNumber));
+
+        Loans newLoan = createNewLoan(mobileNumber);
+        loansRepository.save(newLoan);
+
+        log.info("Loan created successfully. Loan number: {}",
+                newLoan.getLoanNumber());
     }
 
     /**
@@ -55,9 +72,21 @@ public class LoansServiceImpl implements ILoansService {
      */
     @Override
     public LoansDto fetchLoan(String mobileNumber) {
-        Loans loans = loansRepository.findByMobileNumber(mobileNumber).orElseThrow(
-                () -> new ResourceNotFoundException("Loan", "mobileNumber", mobileNumber)
-        );
+
+        log.info("Fetching loan for mobile number: {}", mobileNumber);
+
+        Loans loans = loansRepository.findByMobileNumber(mobileNumber)
+                .orElseThrow(() -> {
+                    log.warn("Loan not found for mobile number: {}", mobileNumber);
+
+                    return new ResourceNotFoundException(
+                            "Loan", "mobileNumber", mobileNumber
+                    );
+                });
+
+        log.info("Loan found successfully. Loan number: {}",
+                loans.getLoanNumber());
+
         return LoansMapper.mapToLoansDto(loans, new LoansDto());
     }
 
