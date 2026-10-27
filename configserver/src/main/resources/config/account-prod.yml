@@ -5,7 +5,7 @@ account:
   message: "Welcome to EazyBank Durgesh accounts related prod APIs "
   contactDetails:
     name: "Reine Aishwarya - Product Owner"
-    email: "98663b494d54889e602673ded9b202b639ae9be4c66b8234c1c8df15a61a3b8480886f401fa137f437d4d07e8eef5fcd"
+    email: "{cipher}98663b494d54889e602673ded9b202b639ae9be4c66b8234c1c8df15a61a3b8480886f401fa137f437d4d07e8eef5fcd"
   onCallSupport:
     - (453) 392-4829
     - (236) 203-0384
