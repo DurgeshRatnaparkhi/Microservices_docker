@@ -2,7 +2,7 @@ build:
   version: "3.0 local"
 
 account:
-  message: "Welcome to EazyBank accounts related prod APIs "
+  message: "Welcome to EazyBank Durgesh accounts related prod APIs "
   contactDetails:
     name: "Reine Aishwarya - Product Owner"
     email: "aishwarya@eazybank.com"

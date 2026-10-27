@@ -2,6 +2,9 @@
 spring:
   application:
     name: account
+  profiles:
+    active:
+      - "prod"
 
   datasource:
     url: "jdbc:h2:mem:testdb"
@@ -19,21 +22,12 @@ spring:
     hibernate:
       ddl-auto: update
   show-sql: true
-  profiles:
-    active:
-      - "prod"
+  config:
+    import: "optional:configserver:http://localhost:8071/"
+
+
 
 logging:
   pattern:
     console: ${CONSOLE_LOG_PATTERN:%green(%d{HH:mm:ss.SSS}) %blue(%-5level) %red([%thread]) %yellow(%logger{15}) - %cyan(%msg%n)}
-build:
-  version: "DEVELOPMENT"
 
-account:
-  message: "Welcome to EazyBank accounts related local APIs"
-  contactDetails:
-    name: "John Doe - Developer"
-    email: "john@eazybank.com"
-  onCallSupport:
-    - "(555) 555-1234"
-    - "(555) 523-1345"
