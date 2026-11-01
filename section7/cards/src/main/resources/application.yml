@@ -1,0 +1,32 @@
+server:
+  port: 9000
+spring:
+  application:
+    name: cards
+  profiles:
+    active:
+      - "prod"
+  datasource:
+    url: jdbc:mysql://localhost:3309/cardsdb
+    username: root
+    password: root
+  jpa:
+    show-sql: true
+  sql:
+    init:
+      mode: never
+  config:
+    import: "optional:configserver:http://localhost:8071/"
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+build:
+  version: "1.0"
+
+logging:
+  pattern:
+    console: ${CONSOLE_LOG_PATTERN:%green(%d{HH:mm:ss.SSS}) %blue(%-5level) %red([%thread]) %yellow(%logger{15}) - %cyan(%msg%n)}
+

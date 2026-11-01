@@ -1,0 +1,177 @@
+name: eazybank-microservices
+
+services:
+
+  # =========================
+  # DATABASE SERVICES
+  # =========================
+
+  accountsdb:
+    container_name: accountsdb
+    ports:
+      - "3307:3306"
+    volumes:
+      - accounts-data:/var/lib/mysql
+    environment:
+      MYSQL_DATABASE: accountsdb
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p\"$$MYSQL_ROOT_PASSWORD\" --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    extends:
+      file: common-config.yml
+      service: microservice-db-config
+    networks:
+      - eazybank
+
+  loansdb:
+    container_name: loansdb
+    ports:
+      - "3308:3306"
+    volumes:
+      - loans-data:/var/lib/mysql
+    environment:
+      MYSQL_DATABASE: loansdb
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p\"$$MYSQL_ROOT_PASSWORD\" --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    extends:
+      file: common-config.yml
+      service: microservice-db-config
+    networks:
+      - eazybank
+
+  cardsdb:
+    container_name: cardsdb
+    ports:
+      - "3309:3306"
+    volumes:
+      - cards-data:/var/lib/mysql
+    environment:
+      MYSQL_DATABASE: cardsdb
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p\"$$MYSQL_ROOT_PASSWORD\" --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    extends:
+      file: common-config.yml
+      service: microservice-db-config
+    networks:
+      - eazybank
+
+
+  # =========================
+  # CONFIG SERVER
+  # =========================
+
+  configserver:
+    image: "eazybytes/configserver:${IMAGE_TAG:-s7}"
+    container_name: configserver-ms
+    ports:
+      - "8071:8071"
+    healthcheck:
+      test: [ "CMD", "bash", "-c", "exec 3<>/dev/tcp/127.0.0.1/8071 && printf 'GET /actuator/health/readiness HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n' >&3 && grep -q '\"status\":\"UP\"' <&3" ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    extends:
+      file: common-config.yml
+      service: microservice-base-config
+    networks:
+      - eazybank
+
+
+  # =========================
+  # ACCOUNTS MICROSERVICE
+  # =========================
+
+  accounts:
+    image: "eazybytes/accounts:${IMAGE_TAG:-s7}"
+    container_name: accounts-ms
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: "jdbc:mysql://accountsdb:3306/accountsdb"
+    depends_on:
+      configserver:
+        condition: service_healthy
+      accountsdb:
+        condition: service_healthy
+    extends:
+      file: common-config.yml
+      service: microservice-configserver-config
+    networks:
+      - eazybank
+
+
+  # =========================
+  # LOANS MICROSERVICE
+  # =========================
+
+  loans:
+    image: "eazybytes/loans:${IMAGE_TAG:-s7}"
+    container_name: loans-ms
+    ports:
+      - "8090:8090"
+    environment:
+      SPRING_DATASOURCE_URL: "jdbc:mysql://loansdb:3306/loansdb"
+    depends_on:
+      configserver:
+        condition: service_healthy
+      loansdb:
+        condition: service_healthy
+    extends:
+      file: common-config.yml
+      service: microservice-configserver-config
+    networks:
+      - eazybank
+
+
+  # =========================
+  # CARDS MICROSERVICE
+  # =========================
+
+  cards:
+    image: "eazybytes/cards:${IMAGE_TAG:-s7}"
+    container_name: cards-ms
+    ports:
+      - "9000:9000"
+    environment:
+      SPRING_DATASOURCE_URL: "jdbc:mysql://cardsdb:3306/cardsdb"
+    depends_on:
+      configserver:
+        condition: service_healthy
+      cardsdb:
+        condition: service_healthy
+    extends:
+      file: common-config.yml
+      service: microservice-configserver-config
+    networks:
+      - eazybank
+
+
+# =========================
+# DOCKER VOLUMES
+# =========================
+
+volumes:
+  accounts-data:
+  loans-data:
+  cards-data:
+
+
+# =========================
+# DOCKER NETWORK
+# =========================
+
+networks:
+  eazybank:
+    driver: bridge
