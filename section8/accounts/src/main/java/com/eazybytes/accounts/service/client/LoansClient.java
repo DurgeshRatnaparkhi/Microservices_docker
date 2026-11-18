@@ -12,3 +12,7 @@ public interface LoansClient {
     @GetExchange(value = "/fetch", accept = "application/json")
     ResponseEntity<LoansDto> fetchLoanDetails(@RequestParam String mobileNumber);
 }
+
+//This code is used to call Loan Service from Account Service.
+// LoansClient is a declarative HTTP client. It allows one microservice to call another microservice using an interface,
+// without manually writing HTTP request code.

@@ -13,7 +13,7 @@ spring:
         git:
           uri: "https://github.com/DurgeshRatnaparkhi/Microservices_docker.git"
           default-label: main
-          search-paths: configserver/src/main/resources/config
+          search-paths: central1-config
           timeout: 5
           clone-on-start: true
           force-pull: true
